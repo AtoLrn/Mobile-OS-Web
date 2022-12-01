@@ -21,7 +21,7 @@ export class Application {
     }
 
     render (args: any) {
-        const doc = document.querySelector(`#${this.id}`)
+        const doc = document.getElementById(this.id)
         if (!doc) return
         const main = doc.getElementsByTagName('main')
         main[0].remove()

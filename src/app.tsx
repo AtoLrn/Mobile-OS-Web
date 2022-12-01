@@ -5,9 +5,38 @@ import { AppType } from "./types/application";
 import { applications } from "./utils/applications";
 import { fileSystem } from "./utils/FileSystem";
 import { eventListener } from "./utils/listener";
+import Sentry from "./utils/sentry";
 import { windowManager } from "./utils/windowManager";
 
 export const App = () => {
+
+  const oldQuerySelector = document.querySelector.bind(document)
+
+  document.querySelector = (selector: string) => {
+    try {
+      return oldQuerySelector(selector)
+    }
+    catch (error) {
+      console.error("Failed to select: ", selector)
+      Sentry.captureException(error)
+    }
+    return null
+  }
+
+  const oldGetElementById = document.getElementById.bind(document)
+
+  document.getElementById = (selector: string) => {
+    try {
+      return oldGetElementById(selector)
+    }
+    catch (error) {
+      console.error("Failed to select: ", selector)
+      Sentry.captureException(error)
+    }
+    return null
+  }
+
+
   const onHoverNav = () => {
     eventListener.post('navHover', true)
   }
@@ -38,7 +67,7 @@ export const App = () => {
   })
 
   fileSystem.save('banane', 'Super')
-
+  
   return (<div id="app">
     <StatusBar />
     <div className='hover-listener' onMouseEnter={onHoverNav} onMouseLeave={onHoverLeftNav}></div>
